@@ -64,4 +64,27 @@ public class ContaController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Conta nao encontrada");
         }
     }
+
+    @PostMapping("transcao/saque/{contaId}/{valor}")
+    public ResponseEntity<Object> sacarValor(@PathVariable double valor, Long contaId){
+        Optional<Conta> buscaConta = contaService.contaFindById(contaId);
+
+        if(buscaConta.get().getSaldo() < 0 || valor > buscaConta.get().getSaldo()) {
+            return ResponseEntity.status(HttpStatus.OK).body("Saldo insuficiente para retirada");
+        }
+        else{
+            buscaConta.get().setSaldo(buscaConta.get().getSaldo() - valor);
+            contaService.contaSave(buscaConta.get());
+            return ResponseEntity.status(HttpStatus.OK).build();
+        }
+    }
+
+    @PostMapping("transcao/deposito/{contaId}/{valor}")
+    public ResponseEntity<Object> depositarValor(@PathVariable double valor, Long contaId){
+        Optional<Conta> buscaConta = contaService.contaFindById(contaId);
+
+        buscaConta.get().setSaldo(buscaConta.get().getSaldo() + valor);
+        contaService.contaSave(buscaConta.get());
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
 }
