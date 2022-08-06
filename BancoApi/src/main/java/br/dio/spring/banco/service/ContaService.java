@@ -17,11 +17,9 @@ public class ContaService {
     public List<Conta> contaFindAll(){
         return contaRepository.findAll();
     }
-
     public Optional<Conta> contaFindById(Long numero){
         return contaRepository.findById(numero);
     }
-
     public void contaSave(Conta conta){
         contaRepository.save(conta);
     }

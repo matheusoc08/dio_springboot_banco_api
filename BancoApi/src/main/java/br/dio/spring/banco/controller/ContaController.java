@@ -66,11 +66,11 @@ public class ContaController {
     }
 
     @PostMapping("transcao/saque/{contaId}/{valor}")
-    public ResponseEntity<Object> sacarValor(@PathVariable double valor, Long contaId){
+    public ResponseEntity<Object> sacarValor(@PathVariable Long contaId, double valor){
         Optional<Conta> buscaConta = contaService.contaFindById(contaId);
 
         if(buscaConta.get().getSaldo() < 0 || valor > buscaConta.get().getSaldo()) {
-            return ResponseEntity.status(HttpStatus.OK).body("Saldo insuficiente para retirada");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Saldo insuficiente para retirada");
         }
         else{
             buscaConta.get().setSaldo(buscaConta.get().getSaldo() - valor);
@@ -80,11 +80,20 @@ public class ContaController {
     }
 
     @PostMapping("transcao/deposito/{contaId}/{valor}")
-    public ResponseEntity<Object> depositarValor(@PathVariable double valor, Long contaId){
+    public ResponseEntity<Object> depositarValor(@PathVariable Long contaId, double valor){
         Optional<Conta> buscaConta = contaService.contaFindById(contaId);
 
         buscaConta.get().setSaldo(buscaConta.get().getSaldo() + valor);
         contaService.contaSave(buscaConta.get());
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @PostMapping("transacao/transferencia/{contaOrigemId}/{contaDestinoId}/{valor}")
+    public ResponseEntity<Object> transferirValor(@PathVariable Long contaOrigemId, Long contaDestinoId, double valor){
+        ResponseEntity<Object> saque = sacarValor(contaOrigemId, valor);
+
+        if(saque.getStatusCode().is2xxSuccessful())
+            return depositarValor(contaDestinoId, valor);
+        return saque;
     }
 }
