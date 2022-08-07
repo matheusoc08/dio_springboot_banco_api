@@ -1,7 +1,6 @@
 package br.dio.spring.banco.controller;
 
 import br.dio.spring.banco.model.Cliente;
-import br.dio.spring.banco.model.Conta;
 import br.dio.spring.banco.service.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,7 +13,6 @@ import java.util.Optional;
 @RestController
 @RequestMapping("cliente")
 public class ClienteController {
-
     @Autowired
     ClienteService clienteService;
 

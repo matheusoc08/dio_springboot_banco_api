@@ -21,10 +21,8 @@ Funcinalidades:
 - [X] Metodos de saque e deposito
 - [X] Métodos de cadastro através de REST API - POST
 - [X] Métodos de busca através de REST API - GET
-- [ ] Método de safe delete para cliente e conta (desativação) - PUT
+- [X] Método de safe delete para cliente e conta (desativação) - PUT
 - [X] Método de edição de cliente - PUT
-- [ ] Adição de cadastro de endereço
-- [ ] Busca de endereço através da API da ViaCep
 - [X] Interação dos métodos da API através do Swagger
 - [X] Dados salvos em banco de dados MySQL
 
