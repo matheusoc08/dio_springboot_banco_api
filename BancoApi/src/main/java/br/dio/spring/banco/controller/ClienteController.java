@@ -1,6 +1,7 @@
 package br.dio.spring.banco.controller;
 
 import br.dio.spring.banco.model.Cliente;
+import br.dio.spring.banco.model.Conta;
 import br.dio.spring.banco.service.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,6 +36,7 @@ public class ClienteController {
 
     @PostMapping("novo")
     public ResponseEntity<Cliente> cadastrarCliente(@RequestBody Cliente cliente){
+        cliente.setClienteAtivo("S");
         clienteService.clienteSave(cliente);
         return ResponseEntity.status(HttpStatus.CREATED).body(cliente);
     }
@@ -51,6 +53,20 @@ public class ClienteController {
         }
         else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente nao encontrado");
+        }
+    }
+
+    @PutMapping("desativar/{clienteId}")
+    public ResponseEntity<Object> desativarCliente(@PathVariable Long clienteId){
+        Optional<Cliente> buscaCliente = clienteService.clienteFindById(clienteId);
+
+        if(buscaCliente.isPresent()){
+            buscaCliente.get().setClienteAtivo("N");
+            clienteService.clienteSave(buscaCliente.get());
+            return ResponseEntity.status(HttpStatus.OK).body(buscaCliente.get());
+        }
+        else{
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Conta nao encontrada");
         }
     }
 

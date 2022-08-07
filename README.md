@@ -17,7 +17,7 @@ Funcionalidades:
 Projeto reformulado
 
 Funcinalidades:
-- [ ] Métodos de transferencia entre contas
+- [X] Métodos de transferencia entre contas
 - [X] Metodos de saque e deposito
 - [X] Métodos de cadastro através de REST API - POST
 - [X] Métodos de busca através de REST API - GET

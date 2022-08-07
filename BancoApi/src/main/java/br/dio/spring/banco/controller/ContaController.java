@@ -26,9 +26,9 @@ public class ContaController {
         return ResponseEntity.ok(contaService.contaFindAll());
     }
 
-    @GetMapping("buscar/{numero}")
-    public ResponseEntity<Object> buscaPorId(@PathVariable Long numero){
-        Optional<Conta> buscaConta = contaService.contaFindById(numero);
+    @GetMapping("buscar/{contaNumero}")
+    public ResponseEntity<Object> buscaPorId(@PathVariable Long contaNumero){
+        Optional<Conta> buscaConta = contaService.contaFindById(contaNumero);
         if(buscaConta.isPresent()){
             return ResponseEntity.status(HttpStatus.OK).body(buscaConta);
         }
@@ -42,7 +42,11 @@ public class ContaController {
         Optional<Cliente> buscaCliente = clienteService.clienteFindById(idCliente);
 
         if(buscaCliente.isPresent()) {
+            if(buscaCliente.get().getClienteAtivo().equals("N"))
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Impossivel abrir conta para um cliente desativado");
+
             conta.setCliente(buscaCliente.get());
+            conta.setContaAtiva("S");
             contaService.contaSave(conta);
             return ResponseEntity.status(HttpStatus.OK).body(conta);
         }
@@ -51,11 +55,11 @@ public class ContaController {
         }
     }
 
-    @PutMapping("editar/{numero}")
-    public ResponseEntity<Object> atualizarConta(@PathVariable Long numero, @RequestBody Conta conta){
-        Optional<Conta> buscaConta = contaService.contaFindById(numero);
+    @PutMapping("editar/{contaNumero}")
+    public ResponseEntity<Object> atualizarConta(@PathVariable Long contaNumero, @RequestBody Conta conta){
+        Optional<Conta> buscaConta = contaService.contaFindById(contaNumero);
         if(buscaConta.isPresent()){
-            conta.setNumero(numero);
+            conta.setNumero(contaNumero);
             conta.setCliente(buscaConta.get().getCliente());
             contaService.contaSave(conta);
             return ResponseEntity.status(HttpStatus.OK).body(conta);
@@ -65,9 +69,24 @@ public class ContaController {
         }
     }
 
-    @PostMapping("transcao/saque/{contaId}/{valor}")
-    public ResponseEntity<Object> sacarValor(@PathVariable Long contaId, double valor){
-        Optional<Conta> buscaConta = contaService.contaFindById(contaId);
+    @PutMapping("desativar/{contaNumero}")
+    public ResponseEntity<Object> desativarConta(@PathVariable Long contaNumero){
+        Optional<Conta> buscaConta = contaService.contaFindById(contaNumero);
+
+        if(buscaConta.isPresent()){
+            buscaConta.get().setContaAtiva("N");
+            contaService.contaSave(buscaConta.get());
+            return ResponseEntity.status(HttpStatus.OK).body(buscaConta.get());
+        }
+        else{
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Conta nao encontrada");
+        }
+    }
+
+    //Metodos de transacoes
+    @PostMapping("transcao/saque/{contaNumero}/{valor}")
+    public ResponseEntity<Object> sacarValor(@PathVariable Long contaNumero, double valor){
+        Optional<Conta> buscaConta = contaService.contaFindById(contaNumero);
 
         if(buscaConta.get().getSaldo() < 0 || valor > buscaConta.get().getSaldo()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Saldo insuficiente para retirada");
@@ -79,9 +98,9 @@ public class ContaController {
         }
     }
 
-    @PostMapping("transcao/deposito/{contaId}/{valor}")
-    public ResponseEntity<Object> depositarValor(@PathVariable Long contaId, double valor){
-        Optional<Conta> buscaConta = contaService.contaFindById(contaId);
+    @PostMapping("transcao/deposito/{contaNumero}/{valor}")
+    public ResponseEntity<Object> depositarValor(@PathVariable Long contaNumero, double valor){
+        Optional<Conta> buscaConta = contaService.contaFindById(contaNumero);
 
         buscaConta.get().setSaldo(buscaConta.get().getSaldo() + valor);
         contaService.contaSave(buscaConta.get());

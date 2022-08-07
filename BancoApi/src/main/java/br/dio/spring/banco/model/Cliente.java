@@ -15,6 +15,7 @@ public class Cliente {
     private String orientacaoSexual;
     private String email;
     private String nroDocumento;
+    private String clienteAtivo;
 
     //Getters and Setters
     public long getId() {
@@ -55,5 +56,13 @@ public class Cliente {
 
     public void setNroDocumento(String nroDocumento) {
         this.nroDocumento = nroDocumento;
+    }
+
+    public String getClienteAtivo() {
+        return clienteAtivo;
+    }
+
+    public void setClienteAtivo(String clienteAtivo) {
+        this.clienteAtivo = clienteAtivo;
     }
 }

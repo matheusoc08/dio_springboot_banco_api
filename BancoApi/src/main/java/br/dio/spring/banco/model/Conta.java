@@ -13,6 +13,7 @@ public class Conta {
     private Long numero;
     private int agencia;
     private double saldo;
+    private String contaAtiva;
     @ManyToOne
     private Cliente cliente;
 
@@ -39,6 +40,14 @@ public class Conta {
 
     public void setSaldo(double saldo) {
         this.saldo = saldo;
+    }
+
+    public String getContaAtiva() {
+        return contaAtiva;
+    }
+
+    public void setContaAtiva(String contaAtiva) {
+        this.contaAtiva = contaAtiva;
     }
 
     public Cliente getCliente() {
